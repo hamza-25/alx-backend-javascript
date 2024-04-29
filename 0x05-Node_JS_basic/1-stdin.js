@@ -15,5 +15,3 @@ else {
         process.stdout.write(`This important software is now closing\n`);
     });
 }
-
-
