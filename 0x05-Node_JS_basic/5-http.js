@@ -1,36 +1,44 @@
 const http = require('http');
-const fs = require('fs');
-const { parse } = require('csv-parse');
+const { readFile } = require('fs');
 
-async function countStudents(filePath) {
-  const field = {};
-  let total = 0;
-
-  const stream = fs.createReadStream(filePath);
-
+function countStudents(fileName) {
+  const students = {};
+  const fields = {};
+  let length = 0;
   return new Promise((resolve, reject) => {
-    stream
-      .pipe(parse({ delimiter: ',', from_line: 2 }))
-      .on('data', (row) => {
-        if (row[3] in field) {
-          field[row[3]].count += 1;
-          total += 1;
-          field[row[3]].names.push(row[0]);
-        } else {
-          field[row[3]] = { count: 1, names: [row[0]] };
-          total += 1;
+    readFile(fileName, (err, data) => {
+      if (err) {
+        reject(err);
+      } else {
+        let output = '';
+        const lines = data.toString().split('\n');
+        for (let i = 0; i < lines.length; i += 1) {
+          if (lines[i]) {
+            length += 1;
+            const field = lines[i].toString().split(',');
+            if (Object.prototype.hasOwnProperty.call(students, field[3])) {
+              students[field[3]].push(field[0]);
+            } else {
+              students[field[3]] = [field[0]];
+            }
+            if (Object.prototype.hasOwnProperty.call(fields, field[3])) {
+              fields[field[3]] += 1;
+            } else {
+              fields[field[3]] = 1;
+            }
+          }
         }
-      })
-      .on('error', () => { // error
-        reject(new Error('Custom error message'));
-      })
-      .on('end', () => {
-        let str = `Number of students: ${total}\n`;
-        Object.entries(field).forEach(([key]) => { // value
-          str += `Number of students in ${key}: ${field[key].count}. List: ${field[key].names.join(', ')}\n`;
-        });
-        resolve(str);
-      });
+        const l = length - 1;
+        output += `Number of students: ${l}\n`;
+        for (const [key, value] of Object.entries(fields)) {
+          if (key !== 'field') {
+            output += `Number of students in ${key}: ${value}. `;
+            output += `List: ${students[key].join(', ')}\n`;
+          }
+        }
+        resolve(output);
+      }
+    });
   });
 }
 
@@ -46,9 +54,9 @@ const app = http.createServer((req, res) => {
     res.setHeader('Content-Type', 'text/plain');
     res.write('This is the list of our students\n');
     countStudents(process.argv[2].toString())
-      .then((output) => {
-        const outString = output.slice(0, -1);
-        res.end(outString);
+      .then((result) => {
+        const finalString = result.slice(0, -1);
+        res.end(finalString);
       })
       .catch(() => {
         res.statusCode = 404;
