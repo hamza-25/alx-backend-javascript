@@ -3,13 +3,13 @@ const fs = require('fs');
 function countStudents(filePath) {
   const students = {};
   const fields = {};
-  let total = 0;
+  let length = 0;
   try {
-    const content = fs.readFileSync(filePath, 'utf-8');
-    const lines = content.toString().split('\n');
-    for (let i = 0; i < lines.total; i += 1) {
+    const fileContents = fs.readFileSync(filePath, 'utf-8');
+    const lines = fileContents.toString().split('\n');
+    for (let i = 0; i < lines.length; i += 1) {
       if (lines[i]) {
-        total += 1;
+        length += 1;
         const field = lines[i].toString().split(',');
         if (Object.prototype.hasOwnProperty.call(students, field[3])) {
           students[field[3]].push(field[0]);
@@ -23,7 +23,7 @@ function countStudents(filePath) {
         }
       }
     }
-    const l = total - 1;
+    const l = length - 1;
     console.log(`Number of students: ${l}`);
     for (const [key, value] of Object.entries(fields)) {
       if (key !== 'field') {
@@ -31,7 +31,7 @@ function countStudents(filePath) {
       }
     }
   } catch (error) {
-    throw new Error('Cannot load the database');
+    throw Error('Cannot load the database');
   }
 }
 
