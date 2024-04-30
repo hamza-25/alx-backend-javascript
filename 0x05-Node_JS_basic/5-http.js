@@ -8,7 +8,7 @@ async function countStudents(filePath) {
 
   const stream = fs.createReadStream(filePath);
 
-  return await new Promise((resolve, reject) => {
+  return new Promise((resolve, reject) => {
     stream
       .pipe(parse({ delimiter: ',', from_line: 2 }))
       .on('data', (row) => {
