@@ -27,7 +27,7 @@ function countStudents(file_path) {
             Object.entries(field).forEach(([key, value]) => {
                 console.log(`Number of students in ${key}: ${field[key]['count']}. List: ${field[key]['names'].join(', ')}`);
             });
-        });
+    });
 }
 
 module.exports = countStudents;
