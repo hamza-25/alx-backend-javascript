@@ -9,6 +9,6 @@ describe('test fetch api', () => {
             // assert.equal(data.data, 'Successful response from the API');
             expect(data).to.have.property('data');
             done();
-        })
+        });
     });
 });
