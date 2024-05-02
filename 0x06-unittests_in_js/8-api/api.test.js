@@ -1,6 +1,6 @@
 const request = require('request');
 // const chai = require('chai');
-// const {describe, it} = require("mocha");
+const {describe, it} = require("mocha");
 const assert = require('assert');
 
 describe('index page', () => {
